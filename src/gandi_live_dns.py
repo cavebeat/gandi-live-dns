@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# encoding: utf-8
 '''
 Gandi v5 LiveDNS - DynDNS Update via REST API and CURL/requests
 
 @author: cave
-Licsense GPLv3
+License GPLv3
 https://www.gnu.org/licenses/gpl-3.0.html
 
 Created on 13 Aug 2017
@@ -12,6 +14,7 @@ http://doc.livedns.gandi.net/#api-endpoint -> https://dns.beta.gandi.net/api/v5/
 
 import requests, json
 import config
+import argparse
 
 
 def get_dynip(ifconfig_provider):
@@ -66,8 +69,14 @@ def update_records(uuid, dynIP, subdomain):
     return True
 
 
-def main():
-    
+def main(force_update, verbosity):
+
+    if force_update:
+        print "force update turned on"
+    if verbosity:
+        print "verbosity turned on"
+
+        
     #get zone ID from Account
     uuid = get_uuid()
    
@@ -75,15 +84,26 @@ def main():
     dynIP = get_dynip(config.ifconfig)
     dnsIP = get_dnsip(uuid)
     
-    if dynIP == dnsIP:
-        print "IP Address match - no further action"
-    else:
-        print "IP Address mismatch - going to update the DNS Records for the subdomains"
+    if force_update:
+        print "Going to update the DNS Records for the subdomains"
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
+    else:
+        if dynIP == dnsIP:
+            print "IP Address Match - no further action"
+        else:
+            print "IP Address Mismatch - going to update the DNS Records for the subdomains"
+            for sub in config.subdomains:
+                update_records(uuid, dynIP, sub)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', help="increase output verbosity", action="store_true")
+    parser.add_argument('-f', '--force', help="force an update", action="store_true")
+    args = parser.parse_args()
+        
+        
+    main(args.force, args.verbose)
 
 
 
