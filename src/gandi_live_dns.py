@@ -32,23 +32,36 @@ def get_uuid():
     GET /domains/<DOMAIN>:
         
     '''
-    url = config.api + '/domains/' + config.domain
+    url = config.api_endpoint + '/domains/' + config.domain
     u = requests.get(url, headers={"X-Api-Key":config.api_secret})
     json_object = json.loads(u._content)
-    return json_object['zone_uuid']
+    if u.status_code == 200:
+        return json_object['zone_uuid']
+    else:
+        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID'
+        print  json_object['message']
+        exit()
 
 def get_dnsip(uuid):
     ''' find out IP from first Subdomain DNS-Record
     List all records with name "NAME" and type "TYPE" in the zone UUID
     GET /zones/<UUID>/records/<NAME>/<TYPE>:
+    
+    The first subdomain from config.subdomain will be used to get   
+    the actual DNS Record IP
     '''
 
-    url = config.api + '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
+    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
     headers = {"X-Api-Key":config.api_secret}
     u = requests.get(url, headers=headers)
-    json_object = json.loads(u._content)
-    print 'Checking IP from DNS Record' , config.subdomains[0], ' : ', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
-    return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+    if u.status_code == 200:
+        json_object = json.loads(u._content)
+        print 'Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+        return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+    else:
+        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0]   
+        print  json_object['message']
+        exit()
 
 def update_records(uuid, dynIP, subdomain):
     ''' update DNS Records for Subdomains 
@@ -60,21 +73,26 @@ def update_records(uuid, dynIP, subdomain):
                          "rrset_values": ["<VALUE>"]}' \
                     https://dns.beta.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
-    url = config.api + '/zones/' + uuid + '/records/' + subdomain + '/A'
+    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
     headers = {"Content-Type": "application/json", "X-Api-Key":config.api_secret}
-    record_update = requests.put(url, data=json.dumps(payload), headers=headers)
-    json_object = json.loads(record_update._content)
-    print 'Status Code: ', record_update.status_code, ', ', json_object['message'], ', IP updated for', subdomain
-    return True
+    u = requests.put(url, data=json.dumps(payload), headers=headers)
+    json_object = json.loads(u._content)
+
+    if u.status_code == 201:
+        print 'Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain
+        return True
+    else:
+        print 'Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain   
+        print  json_object['message']
+        exit()
+
 
 
 def main(force_update, verbosity):
 
-    if force_update:
-        print "force update turned on"
     if verbosity:
-        print "verbosity turned on"
+        print "verbosity turned on - not implemented by now"
 
         
     #get zone ID from Account
@@ -85,21 +103,21 @@ def main(force_update, verbosity):
     dnsIP = get_dnsip(uuid)
     
     if force_update:
-        print "Going to update the DNS Records for the subdomains"
+        print "Going to update/create the DNS Records for the subdomains"
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
             print "IP Address Match - no further action"
         else:
-            print "IP Address Mismatch - going to update the DNS Records for the subdomains"
+            print "IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP
             for sub in config.subdomains:
                 update_records(uuid, dynIP, sub)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help="increase output verbosity", action="store_true")
-    parser.add_argument('-f', '--force', help="force an update", action="store_true")
+    parser.add_argument('-f', '--force', help="force an update/create", action="store_true")
     args = parser.parse_args()
         
         
