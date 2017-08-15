@@ -104,7 +104,7 @@ Zone File/Zone UUID. This can be used if additional/new subdomains get appended 
 There exist several providers for this case, but better is to run your own somewhere. 
 
 #### Poor Mans PHP Solution
-On a LAMP Stack, place the file [index.php]https://github.com/cavebeat/gandi_live_dns/blob/master/src/example-index.php) in a directory /ip in your webroot. 
+On a LAMP Stack, place the file [index.php](https://github.com/cavebeat/gandi_live_dns/blob/master/src/example-index.php) in a directory /ip in your webroot. 
 
 ```
 root@laptop:~# curl https://blog.cavebeat.org/ip/
@@ -112,8 +112,8 @@ root@laptop:~# curl https://blog.cavebeat.org/ip/
 ```
 This should fit your personal needs and you still selfhost the whole thing. 
 
-#### https://github.com/mpolden/ipd   
-A simple service for looking up your IP address. This is the code that powers [https://ifconfig.co](https://ifconfig.co)
+####  IP address lookup service https://ifconfig.co
+https://github.com/mpolden/ipd A simple service for looking up your IP address. This is the code that powers [https://ifconfig.co](https://ifconfig.co)
 
 #### use external services
 choose one as described in the config file. 
