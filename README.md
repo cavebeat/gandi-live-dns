@@ -10,7 +10,7 @@ With the new v5 Website, Gandi has also launched a new REST API which makes it e
 
 ### Goal
 
-You want your homeserver to be always available at `dynamic.mydomain.tld`.
+You want your homeserver to be always available at `dynamic_subdomain.mydomain.tld`.
 
 ### Debian Package Requirements
 
@@ -25,9 +25,9 @@ key by following their directions.
 Create the DNS A Records in the GANDI Webinterface which you want to update if your IP changes. 
 
 #### Git Clone or Download the Script
-Download the Script from [GitHub](https://github.com/cavebeat/gandi_live_dns/archive/master.zip) and unzip it.  
+Download the Script from here as [zip](https://github.com/cavebeat/gandi_live_dns/archive/master.zip)/[tar.gz](https://github.com/cavebeat/gandi_live_dns/archive/master.tar.gz) and extract it.  
 
-or
+or clone from git
 
 `git clone https://github.com/cavebeat/gandi_live_dns.git` 
 
@@ -100,6 +100,36 @@ The force option runs the script, even when no IP change has been detected.
 It will update all subdomains and even create them if they are missing in the 
 Zone File/Zone UUID. This can be used if additional/new subdomains get appended to the conig file.  
 
+### IP address lookup service 
+There exist several providers for this case, but better is to run your own somewhere. 
+
+#### Poor Mans PHP Solution
+On a LAMP Stack, place the file [index.php]https://github.com/cavebeat/gandi_live_dns/blob/master/src/example-index.php) in a directory /ip in your webroot. 
+
+```
+root@laptop:~# curl https://blog.cavebeat.org/ip/
+127.0.0.1
+```
+This should fit your personal needs and you still selfhost the whole thing. 
+
+#### https://github.com/mpolden/ipd   
+A simple service for looking up your IP address. This is the code that powers [https://ifconfig.co](https://ifconfig.co)
+
+#### use external services
+choose one as described in the config file. 
+
+### Cron the script
+
+```
+*/5 * * * * /root//root/gandi_live_dns-master/src/gandi_live_dns.py >/dev/null 2>&1 
+```
+
+### Upcoming Features
+* command line Argument for verbose mode
+
+### Inspiration   
 
 This DynDNS updater is inspired by https://github.com/jasontbradshaw/gandi-dyndns which worked very well 
-with the classic DNS from Gandiv4 Website and their XML-RPC API. 
+with the classic DNS from Gandiv4 Website and their XML-RPC API.
+
+Gandi has created a new API, i accidently switched to the new DNS Record System, so someone had to start a new updater.  

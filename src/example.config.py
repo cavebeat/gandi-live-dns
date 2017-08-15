@@ -29,15 +29,17 @@ subdomains = ["subdomain1", "subdomain2", "subdomain3"]
 #300 seconds = 5 minutes
 ttl = '300'
 
-'''external ip provider
+''' 
+IP address lookup service 
 run your own external IP provider:
 + https://github.com/mpolden/ipd
 + <?php $ip = $_SERVER['REMOTE_ADDR']; ?>
   <?php print $ip; ?>
 e.g. 
-+ http://ifconfig.me/ip
 + https://ifconfig.co
++ http://ifconfig.me/ip
 + http://whatismyip.akamai.com/
 + http://ipinfo.io/ip
++ many more ...
 '''
 ifconfig = 'choose_from_above_or_run_your_own'
