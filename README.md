@@ -1,4 +1,4 @@
-gandi_live_dns
+gandi-live-dns
 ----
 
 This is a simple dynamic DNS updater for the
@@ -25,11 +25,11 @@ key by following their directions.
 Create the DNS A Records in the GANDI Webinterface which you want to update if your IP changes. 
 
 #### Git Clone or Download the Script
-Download the Script from here as [zip](https://github.com/cavebeat/gandi_live_dns/archive/master.zip)/[tar.gz](https://github.com/cavebeat/gandi_live_dns/archive/master.tar.gz) and extract it.  
+Download the Script from here as [zip](https://github.com/cavebeat/gandi-live-dns/archive/master.zip)/[tar.gz](https://github.com/cavebeat/gandi-live-dns/archive/master.tar.gz) and extract it.  
 
 or clone from git
 
-`git clone https://github.com/cavebeat/gandi_live_dns.git` 
+`git clone https://github.com/cavebeat/gandi-live-dns.git` 
 
 #### Script Configuration
 Then you'd need to configure the script in the src directory.
@@ -65,7 +65,7 @@ The first subdomain is used to find out the actual IP in the Zone Records.
 And run the script:
 
 ```
-root@dyndns:~/gandi_live_dns-master/src# ./gandi_live_dns.py   
+root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py   
 Checking dynamic IP:  127.0.0.1
 Checking IP from DNS Record subdomain1:  127.0.0.1
 IP Address Match - no further action
@@ -75,7 +75,7 @@ If your IP has changed, it will be detected and the update will be triggered.
 
 
 ```
-root@dyndns:~/gandi_live_dns-master/src# ./gandi_live_dns.py
+root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py
 Checking dynamic IP:  127.0.0.2
 Checking IP from DNS Record subdomain1:  127.0.0.1
 IP Address Mismatch - going to update the DNS Records for the subdomains with new IP 127.0.0.2
@@ -87,8 +87,8 @@ Status Code: 201 , DNS Record Created , IP updated for subdomain3
 #### Command Line Arguments
 
 ```
-root@dyndns:~/gandi_live_dns-master/src# ./gandi_live_dns.py -h
-usage: gandi_live_dns.py [-h] [-f]
+root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py -h
+usage: gandi-live-dns.py [-h] [-f]
 
 optional arguments:
   -h, --help     show this help message and exit
@@ -104,7 +104,7 @@ Zone File/Zone UUID. This can be used if additional/new subdomains get appended 
 There exist several providers for this case, but better is to run your own somewhere. 
 
 #### Poor Mans PHP Solution
-On a LAMP Stack, place the file [index.php](https://github.com/cavebeat/gandi_live_dns/blob/master/src/example-index.php) in a directory /ip in your webroot. 
+On a LAMP Stack, place the file [index.php](https://github.com/cavebeat/gandi-live-dns/blob/master/src/example-index.php) in a directory /ip in your webroot. 
 
 ```
 root@laptop:~# curl https://blog.cavebeat.org/ip/
@@ -120,9 +120,13 @@ choose one as described in the config file.
 
 ### Cron the script
 
+Run the script every five minutes. 
 ```
-*/5 * * * * /root//root/gandi_live_dns-master/src/gandi_live_dns.py >/dev/null 2>&1 
+*/5 * * * * /root/gandi-live-dns-master/src/gandi-live-dns.py >/dev/null 2>&1 
 ```
+### Limitations
+The XML-RPC API has a limit of 30 requests per 2 seconds, so i guess it's safe to update 25 subdomains at once with the REST API. 
+
 
 ### Upcoming Features
 * command line Argument for verbose mode
