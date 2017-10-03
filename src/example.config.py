@@ -16,9 +16,9 @@ api_secret = '---my_secret_API_KEY----'
 '''
 Gandiv5 LiveDNS API Location
 http://doc.livedns.gandi.net/#api-endpoint
-https://dns.beta.gandi.net/api/v5/
+https://dns.api.gandi.net/api/v5/
 '''
-api_endpoint = 'https://dns.beta.gandi.net/api/v5'
+api_endpoint = 'https://dns.api.gandi.net/api/v5'
 
 #your domain with the subdomains in the zone file/UUID 
 domain = 'mydomain.tld'
