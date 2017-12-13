@@ -22,8 +22,8 @@ def get_dynip(ifconfig_provider):
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
     r = requests.get(ifconfig_provider)
-    print 'Checking dynamic IP: ' , r._content.strip('\n')
-    return r.content.strip('\n')
+    print('Checking dynamic IP: ' , r.text.strip('\n'))
+    return r.text.strip('\n')
 
 def get_uuid():
     ''' 
@@ -34,12 +34,12 @@ def get_uuid():
     '''
     url = config.api_endpoint + '/domains/' + config.domain
     u = requests.get(url, headers={"X-Api-Key":config.api_secret})
-    json_object = json.loads(u._content)
+    json_object = u.json()
     if u.status_code == 200:
         return json_object['zone_uuid']
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID'
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID')
+        print(json_object['message'])
         exit()
 
 def get_dnsip(uuid):
@@ -55,12 +55,12 @@ def get_dnsip(uuid):
     headers = {"X-Api-Key":config.api_secret}
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
-        json_object = json.loads(u._content)
-        print 'Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
-        return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+        json_object = u.json()
+        print('Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].strip('\n'))
+        return json_object['rrset_values'][0].strip('\n')
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0]   
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0])   
+        print(json_object['message'])
         exit()
 
 def update_records(uuid, dynIP, subdomain):
@@ -77,14 +77,14 @@ def update_records(uuid, dynIP, subdomain):
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
     headers = {"Content-Type": "application/json", "X-Api-Key":config.api_secret}
     u = requests.put(url, data=json.dumps(payload), headers=headers)
-    json_object = json.loads(u._content)
+    json_object = u.json()
 
     if u.status_code == 201:
-        print 'Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain
+        print('Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain)
         return True
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain   
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain)   
+        print(json_object['message'])
         exit()
 
 
@@ -92,7 +92,7 @@ def update_records(uuid, dynIP, subdomain):
 def main(force_update, verbosity):
 
     if verbosity:
-        print "verbosity turned on - not implemented by now"
+        print("verbosity turned on - not implemented by now")
 
         
     #get zone ID from Account
@@ -103,14 +103,14 @@ def main(force_update, verbosity):
     dnsIP = get_dnsip(uuid)
     
     if force_update:
-        print "Going to update/create the DNS Records for the subdomains"
+        print("Going to update/create the DNS Records for the subdomains")
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
-            print "IP Address Match - no further action"
+            print("IP Address Match - no further action")
         else:
-            print "IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP
+            print("IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP)
             for sub in config.subdomains:
                 update_records(uuid, dynIP, sub)
 
