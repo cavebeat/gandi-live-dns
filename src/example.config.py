@@ -36,7 +36,7 @@ run your own external IP provider:
 + <?php $ip = $_SERVER['REMOTE_ADDR']; ?>
   <?php print $ip; ?>
 e.g. 
-+ https://ifconfig.co
++ https://ifconfig.co/ip
 + http://ifconfig.me/ip
 + http://whatismyip.akamai.com/
 + http://ipinfo.io/ip
