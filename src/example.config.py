@@ -43,3 +43,42 @@ e.g.
 + many more ...
 '''
 ifconfig = 'choose_from_above_or_run_your_own'
+
+
+'''
+Sample logging config
+This is optmized for *nix
+Permission are needed to write the log file
+'''
+log_config = {
+        'version': 1,
+        'formatters': {
+            'detailed': {
+                'class': 'logging.Formatter',
+                'format': '%(asctime)s %(name)-15s %(levelname)-8s %(processName)-10s %(message)s'
+            },
+            'simple': {
+                'class': 'logging.Formatter',
+                'format': '%(message)s'
+            }
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+            },
+            'file': {
+                'class': 'logging.handlers.TimedRotatingFileHandler',
+                'filename': '/var/log/gandi-live-dns.log',
+                'when': 'W6',
+                'backupCount': '3',
+                'formatter': 'detailed',
+            },
+        },
+        'loggers': {
+        'gandi-live-dns': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'file']
+        },
+        },
+    }

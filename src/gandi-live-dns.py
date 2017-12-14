@@ -12,17 +12,22 @@ http://doc.livedns.gandi.net/
 http://doc.livedns.gandi.net/#api-endpoint -> https://dns.beta.gandi.net/api/v5/
 '''
 
-import requests, json
+import json
+import logging
+import logging.config
+import requests
 import config
 import argparse
 
+logging.config.dictConfig(config.log_config)
+log = logging.getLogger('gandi-live-dns')
 
 def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
     r = requests.get(ifconfig_provider)
-    print('Checking dynamic IP: ' , r.text.strip('\n'))
+    log.info('Checking dynamic IP: {}'.format(r.text.strip('\n')))
     return r.text.strip('\n')
 
 def get_uuid():
@@ -38,8 +43,8 @@ def get_uuid():
     if u.status_code == 200:
         return json_object['zone_uuid']
     else:
-        print('Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID')
-        print(json_object['message'])
+        log.error('Error: HTTP Status Code {} when trying to get Zone UUID'.format(u.status_code))
+        log.error('{}'.format(json_object['message']))
         exit()
 
 def get_dnsip(uuid):
@@ -56,11 +61,11 @@ def get_dnsip(uuid):
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = u.json()
-        print('Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].strip('\n'))
+        log.info('Checking IP from DNS Record {} : {}'.format(config.subdomains[0], json_object['rrset_values'][0].strip('\n')))
         return json_object['rrset_values'][0].strip('\n')
     else:
-        print('Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0])   
-        print(json_object['message'])
+        log.error('Error: HTTP Status Code {} when trying to get IP from subdomain {}'.format(u.status_code, config.subdomains[0]))
+        log.error('{}'.format(json_object['message']))
         exit()
 
 def update_records(uuid, dynIP, subdomain):
@@ -80,11 +85,11 @@ def update_records(uuid, dynIP, subdomain):
     json_object = u.json()
 
     if u.status_code == 201:
-        print('Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain)
+        log.info('Status Code: {}, {}, IP updated for {}'.format(u.status_code, json_object['message'], subdomain))
         return True
     else:
-        print('Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain)   
-        print(json_object['message'])
+        log.error('Error: HTTP Status Code {} when trying to update IP from subdomain {}'.format(u.status_code, subdomain))   
+        log.error('{}'.format(json_object['message']))
         exit()
 
 
@@ -103,14 +108,14 @@ def main(force_update, verbosity):
     dnsIP = get_dnsip(uuid)
     
     if force_update:
-        print("Going to update/create the DNS Records for the subdomains")
+        log.info("Going to update/create the DNS Records for the subdomains")
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
-            print("IP Address Match - no further action")
+            log.info("IP Address Match - no further action")
         else:
-            print("IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP)
+            log.info("IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP)
             for sub in config.subdomains:
                 update_records(uuid, dynIP, sub)
 
@@ -119,12 +124,5 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', help="increase output verbosity", action="store_true")
     parser.add_argument('-f', '--force', help="force an update/create", action="store_true")
     args = parser.parse_args()
-        
-        
     main(args.force, args.verbose)
-
-
-
-
-
     
