@@ -26,6 +26,7 @@ def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
+    log.debug('Using ifconfig_provider {}'.format(ifconfig_provider))
     r = requests.get(ifconfig_provider)
     log.info('Checking dynamic IP: {}'.format(r.text.strip('\n')))
     return r.text.strip('\n')
@@ -38,6 +39,7 @@ def get_uuid():
         
     '''
     url = config.api_endpoint + '/domains/' + config.domain
+    log.debug('Using url {}'.format(url))
     u = requests.get(url, headers={"X-Api-Key":config.api_secret})
     json_object = u.json()
     if u.status_code == 200:
@@ -57,7 +59,9 @@ def get_dnsip(uuid):
     '''
 
     url = config.api_endpoint+ '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
+    log.debug('Using url {}'.format(url))    
     headers = {"X-Api-Key":config.api_secret}
+    log.debug('Using headers {}'.format(headers))    
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = u.json()
@@ -79,8 +83,11 @@ def update_records(uuid, dynIP, subdomain):
                     https://dns.beta.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
     url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
+    log.debug('Using url {}'.format(url))        
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
+    log.debug('Using payload {}'.format(payload))        
     headers = {"Content-Type": "application/json", "X-Api-Key":config.api_secret}
+    log.debug('Using headers {}'.format(headers))        
     u = requests.put(url, data=json.dumps(payload), headers=headers)
     json_object = u.json()
 
@@ -97,19 +104,22 @@ def update_records(uuid, dynIP, subdomain):
 def main(force_update, verbosity):
 
     if verbosity:
-        print("verbosity turned on - not implemented by now")
+        log.setLevel(logging.DEBUG)
+        log.debug('Verbosity On')
 
-        
     #get zone ID from Account
     uuid = get_uuid()
+    log.debug('uuid: {}'.format(uuid))
    
     #compare dynIP and DNS IP 
     dynIP = get_dynip(config.ifconfig)
     dnsIP = get_dnsip(uuid)
+    log.debug('dynIP: {}, dnsIP: {}'.format(dynIP, dnsIP))
     
     if force_update:
         log.info("Going to update/create the DNS Records for the subdomains")
         for sub in config.subdomains:
+            log.debug('Forcing update on {}'.format(sub))
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
@@ -117,6 +127,7 @@ def main(force_update, verbosity):
         else:
             log.info("IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP)
             for sub in config.subdomains:
+                log.debug('Updating on {}'.format(sub))                
                 update_records(uuid, dynIP, sub)
 
 if __name__ == "__main__":
