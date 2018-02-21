@@ -98,6 +98,7 @@ def main(force_update, verbosity):
     #get zone ID from Account
     uuid = get_uuid()
 
+    #need to do some cleanup here
     #compare dynIP and DNS IP
     if config.ifconfigv4 != "":
         dynIPv4 = get_dynip(config.ifconfigv4)
