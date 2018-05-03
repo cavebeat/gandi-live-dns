@@ -18,7 +18,7 @@ import argparse
 
 
 def get_dynip(ifconfig_provider):
-    ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
+    ''' find out own IP at home <-- this is the dynamic IP which changes more or less frequently
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers
     '''
     r = requests.get(ifconfig_provider)
