@@ -98,7 +98,7 @@ def main(force_update, verbosity):
     #get zone ID from Account
     uuid = get_uuid()
 
-    #compare dynIP and DNS IP
+    #compare dynIP and DNS IP for IPv4
     if config.ifconfigv4 != "":
         dynIPv4 = get_dynip(config.ifconfigv4)
         dnsIPv4 = get_dnsip(uuid, "A")
@@ -115,6 +115,7 @@ def main(force_update, verbosity):
                 for sub in config.subdomains:
                     update_records(uuid, dynIPv4, sub, "A")
 
+    #compare dynIP and DNS IP for IPv6
     if config.ifconfigv6 != "":
         dynIPv6 = get_dynip(config.ifconfigv6)
         dnsIPv6 = get_dnsip(uuid, "AAAA")
