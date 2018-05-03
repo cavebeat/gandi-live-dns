@@ -127,7 +127,7 @@ https://github.com/mpolden/ipd A simple service for looking up your IP address. 
 #### Use external services
 Choose one as described in the config file.
 If you are updating AAAA Records with your IPv6 address, make sure your IP address lookup service supports returning your IPv6 address.  
-See `example.config.py` for how [https://ifconfig.co]https://ifconfig.co can be used in this way.
+See `example.config.py` for how https://ifconfig.co can be used in this way.
 
 ### Cron the script
 
