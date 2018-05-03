@@ -147,4 +147,4 @@ The XML-RPC API has a limit of 30 requests per 2 seconds, so i guess it's safe t
 This DynDNS updater is inspired by https://github.com/jasontbradshaw/gandi-dyndns which worked very well
 with the classic DNS from Gandiv4 Website and their XML-RPC API.
 
-Gandi has created a new API, i accidently switched to the new DNS Record System, so someone had to start a new updater.  
+Gandi has created a new API, I accidentally switched to the new DNS Record System, so someone had to start a new updater.  
