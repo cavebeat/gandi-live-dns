@@ -68,9 +68,9 @@ And run the script:
 root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py   
 Checking dynamic IP:  127.0.0.1
 Checking IP from DNS Record subdomain1:  127.0.0.1
+IPv4 Address Match - no further action
 Checking dynamic IP:  fe80::1
 Checking IP from DNS Record subdomain1:  fe80::1
-IPv4 Address Match - no further action
 IPv6 Address Match - no further action
 ```
 
@@ -81,12 +81,12 @@ If your IP has changed, it will be detected and the update will be triggered.
 root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py
 Checking dynamic IP:  127.0.0.2
 Checking IP from DNS Record subdomain1:  127.0.0.1
-Checking dynamic IP:  fe80::2
-Checking IP from DNS Record subdomain1:  fe80::1
 IPv4 Address Mismatch - going to update the DNS Records for the subdomains with new IP 127.0.0.2
 Status Code: 201 , DNS Record Created , IP updated for subdomain1
 Status Code: 201 , DNS Record Created , IP updated for subdomain2
 Status Code: 201 , DNS Record Created , IP updated for subdomain3
+Checking dynamic IP:  fe80::2
+Checking IP from DNS Record subdomain1:  fe80::1
 IPv6 Address Mismatch - going to update the DNS Records for the subdomains with new IP fe80::2
 Status Code: 201 , DNS Record Created , IP updated for subdomain1
 Status Code: 201 , DNS Record Created , IP updated for subdomain2
