@@ -12,7 +12,7 @@ description: |
   With the new v5 Website, Gandi has also launched a new REST API which makes it
   easier to communicate via bash/curl or python/requests.
 
-grade: devel
+grade: stable
 confinement: strict
 
 parts:
@@ -24,14 +24,13 @@ parts:
       - python-args
       - python-simplejson
     override-build: |
-      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
-      cp -v src/example.config.py src/config.py
+      cp -v src/snap.config.py src/config.py
       mv -v src/gandi-live-dns.py \
             src/config.py \
-            $SNAPCRAFT_PART_INSTALL/bin
+            $SNAPCRAFT_PART_INSTALL
       snapcraftctl build
 
 apps:
   gandi-live-dns:
-    command: python $SNAP/bin/gandi-live-dns.py
+    command: python $SNAP/gandi-live-dns.py
     plugs: [network]
