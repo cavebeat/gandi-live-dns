@@ -1,0 +1,37 @@
+name: gandi-live-dns
+version: git
+summary: GANDI dynamic DNS updater
+description: |
+  This is a simple dynamic DNS updater for the Gandi registrar. It uses their
+  LiveDNS REST API to update the zone file for a subdomain of a domain to point
+  at the external IPv4 address of the computer it has been run from.
+
+  It has been developed on Debian 8 Jessie and tested on Debian 9 Stretch
+  GNU/Linux using Python 2.7.
+
+  With the new v5 Website, Gandi has also launched a new REST API which makes it
+  easier to communicate via bash/curl or python/requests.
+
+grade: devel
+confinement: strict
+
+parts:
+  gandi-live-dns:
+    plugin: nil
+    stage-packages:
+      - unzip
+      - python-requests
+      - python-args
+      - python-simplejson
+    override-build: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp -v src/example.config.py src/config.py
+      mv -v src/gandi-live-dns.py \
+            src/config.py \
+            $SNAPCRAFT_PART_INSTALL/bin
+      snapcraftctl build
+
+apps:
+  gandi-live-dns:
+    command: python $SNAP/bin/gandi-live-dns.py
+    plugs: [network]

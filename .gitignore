@@ -1,2 +1,7 @@
 src/config.py
 src/config.pyc
+parts
+prime
+snap/.snapcraft
+stage
+*.snap
