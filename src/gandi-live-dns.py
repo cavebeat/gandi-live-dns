@@ -54,8 +54,8 @@ def get_dnsip(uuid):
     url = config.api_endpoint+ '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
     headers = {"X-Api-Key":config.api_secret}
     u = requests.get(url, headers=headers)
+    json_object = json.loads(u._content)
     if u.status_code == 200:
-        json_object = json.loads(u._content)
         print 'Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
         return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
     else:
