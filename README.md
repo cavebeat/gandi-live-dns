@@ -4,7 +4,7 @@ gandi-live-dns
 This is a simple dynamic DNS updater for the
 [Gandi](https://www.gandi.net) registrar. It uses their [LiveDNS REST API](http://doc.livedns.gandi.net/) to update the zone file for a subdomain of a domain to point at the external IPv4 address of the computer it has been run from.
 
-It has been developed on Debian 8 Jessie and tested on Debian 9 Sretch GNU/Linux using Python 2.7.
+It has been developed on Debian 8 Jessie and tested on Debian 9 Stretch GNU/Linux using Python 2.7.
 
 With the new v5 Website, Gandi has also launched a new REST API which makes it easier to communicate via bash/curl or python/requests.  
 
@@ -46,7 +46,7 @@ Gandiv5 LiveDNS API Location
 http://doc.livedns.gandi.net/#api-endpoint
 
 ```
-api_endpoint = 'https://dns.beta.gandi.net/api/v5'
+api_endpoint = 'https://dns.api.gandi.net/api/v5'
 ```
 
 ##### domain

@@ -9,7 +9,7 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 Created on 13 Aug 2017
 http://doc.livedns.gandi.net/ 
-http://doc.livedns.gandi.net/#api-endpoint -> https://dns.beta.gandi.net/api/v5/
+http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 '''
 
 import requests, json
@@ -71,7 +71,7 @@ def update_records(uuid, dynIP, subdomain):
                     -H 'X-Api-Key: XXX' \
                     -d '{"rrset_ttl": 10800,
                          "rrset_values": ["<VALUE>"]}' \
-                    https://dns.beta.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
+                    https://dns.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
     url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
