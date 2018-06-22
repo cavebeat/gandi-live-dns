@@ -20,7 +20,7 @@ https://dns.api.gandi.net/api/v5/
 '''
 api_endpoint = 'https://dns.api.gandi.net/api/v5'
 
-#your domain with the subdomains in the zone file/UUID 
+#your domain with the subdomains in the zone file/UUID
 domain = 'mydomain.tld'
 
 #enter all subdomains to be updated, subdomains must already exist to be updated
@@ -29,13 +29,13 @@ subdomains = ["subdomain1", "subdomain2", "subdomain3"]
 #300 seconds = 5 minutes
 ttl = '300'
 
-''' 
-IP address lookup service 
+'''
+IP address lookup service
 run your own external IP provider:
 + https://github.com/mpolden/ipd
 + <?php $ip = $_SERVER['REMOTE_ADDR']; ?>
   <?php print $ip; ?>
-e.g. 
+e.g.
 + https://ifconfig.co/ip
 + http://ifconfig.me/ip
 + http://whatismyip.akamai.com/
@@ -43,3 +43,9 @@ e.g.
 + many more ...
 '''
 ifconfig = 'choose_from_above_or_run_your_own'
+
+
+'''
+Target domain you wish to update your domain to.
+'''
+target_domain = 'target_domain_you_wish'

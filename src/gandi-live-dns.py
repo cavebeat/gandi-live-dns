@@ -15,7 +15,14 @@ http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 import requests, json
 import config
 import argparse
+import socket
 
+def get_DomainIp(target_domain):
+    ''' Get IPv4 of target domainself.
+    This is the IP address of another domain you wish to update your own domain to
+    '''
+    ipaddress = socket.getaddrinfo(target_domain,'http')[0][4][0]
+    return ipaddress.strip('\n')
 
 def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
@@ -89,7 +96,7 @@ def update_records(uuid, dynIP, subdomain):
 
 
 
-def main(force_update, verbosity):
+def main(force_update, verbosity, d2dmode):
 
     if verbosity:
         print "verbosity turned on - not implemented by now"
@@ -97,11 +104,14 @@ def main(force_update, verbosity):
         
     #get zone ID from Account
     uuid = get_uuid()
-   
-    #compare dynIP and DNS IP 
-    dynIP = get_dynip(config.ifconfig)
+
+    #compare dynIP and DNS IP
+    if d2dmode:
+        dynIP = get_DomainIp(config.target_domain)
+    else:
+        dynIP = get_dynip(config.ifconfig)
     dnsIP = get_dnsip(uuid)
-    
+
     if force_update:
         print "Going to update/create the DNS Records for the subdomains"
         for sub in config.subdomains:
@@ -118,13 +128,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help="increase output verbosity", action="store_true")
     parser.add_argument('-f', '--force', help="force an update/create", action="store_true")
+    parser.add_argument('-d', '--d2d', help="domain to domain mode", action="store_true")
     args = parser.parse_args()
-        
-        
-    main(args.force, args.verbose)
 
 
-
-
-
-    
+    main(args.force, args.verbose, args.d2dmode)
