@@ -132,4 +132,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    main(args.force, args.verbose, args.d2dmode)
+    main(args.force, args.verbose, args.d2d)
