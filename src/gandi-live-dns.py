@@ -21,8 +21,8 @@ def get_DomainIp(target_domain):
     ''' Get IPv4 of target domainself.
     This is the IP address of another domain you wish to update your own domain to
     '''
-    ipaddress = socket.getaddrinfo(target_domain,'http')[0][4][0]
-    return ipaddress.strip('\n')
+    ipaddress = socket.gethostbyname(target_domain)
+    return ipaddress
 
 def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
