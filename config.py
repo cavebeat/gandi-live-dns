@@ -1,7 +1,5 @@
 '''
-Created on 13 Aug 2017
-@author: cave
-Copy this file to config.py and update the settings
+DONT COMMIT ME
 '''
 #!/usr/bin/env python
 # encoding: utf-8
@@ -11,7 +9,7 @@ Get your API key
 Start by retrieving your API Key from the "Security" section in new Account admin panel to be able to make authenticated requests to the API.
 https://account.gandi.net/
 '''
-api_secret = '---my_secret_API_KEY----'
+api_secret = 'KWyuy0WIBZ0enWAOjGAM9boP'
 
 '''
 Gandiv5 LiveDNS API Location
@@ -21,10 +19,10 @@ https://dns.api.gandi.net/api/v5/
 api_endpoint = 'https://dns.api.gandi.net/api/v5'
 
 #your domain with the subdomains in the zone file/UUID 
-domain = 'mydomain.tld'
+domain = 'bitsandatoms.net'
 
 #enter all subdomains to be updated, subdomains must already exist to be updated
-subdomains = ["subdomain1", "subdomain2", "subdomain3"]
+subdomains = ["buswatcher", "webster"]
 
 #300 seconds = 5 minutes
 ttl = '300'
@@ -42,4 +40,4 @@ e.g.
 + http://ipinfo.io/ip
 + many more ...
 '''
-ifconfig = 'choose_from_above_or_run_your_own'
+ifconfig = 'https://ifconfig.co/ip'
