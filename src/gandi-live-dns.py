@@ -51,7 +51,7 @@ def get_dnsip(uuid):
     the actual DNS Record IP
     '''
 
-    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
+    url = config.api_endpoint+ '/domains/' + config.domain + '/records/' + config.subdomains[0] + '/A'
     headers = {"X-Api-Key":config.api_secret}
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
@@ -73,7 +73,7 @@ def update_records(uuid, dynIP, subdomain):
                          "rrset_values": ["<VALUE>"]}' \
                     https://dns.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
-    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
+    url = config.api_endpoint+ '/domains/' + config.domain + '/records/' + subdomain + '/A'
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
     headers = {"Content-Type": "application/json", "X-Api-Key":config.api_secret}
     u = requests.put(url, data=json.dumps(payload), headers=headers)
