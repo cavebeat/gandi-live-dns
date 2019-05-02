@@ -43,3 +43,11 @@ e.g.
 + many more ...
 '''
 ifconfig = 'choose_from_above_or_run_your_own'
+
+'''
+A bash command to run in order to retrieve the current IPv4.
+If set, takes precedence over 'ifconfig'.
+
+The command used should only output the ip address with no additional output!
+'''
+ipcommand = ''

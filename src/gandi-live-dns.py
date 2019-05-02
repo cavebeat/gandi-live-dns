@@ -15,7 +15,14 @@ http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 import requests, json
 import config
 import argparse
+import subprocess
 
+def get_dynip_cmd(ip_command):
+    ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
+    e.g., "curl ifconfig.me/ip", see example.config.py for details to ipcommand providers
+    '''
+    ip = subprocess.Popen(ip_command.split(), stdout=subprocess.PIPE).communicate()[0]
+    return ip.strip('\n')
 
 def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
@@ -99,7 +106,7 @@ def main(force_update, verbosity):
     uuid = get_uuid()
    
     #compare dynIP and DNS IP 
-    dynIP = get_dynip(config.ifconfig)
+    dynIP = get_dynip_cmd(config.ipcommand) if config.ipcommand else get_dynip(config.ifconfig)
     dnsIP = get_dnsip(uuid)
     
     if force_update:
