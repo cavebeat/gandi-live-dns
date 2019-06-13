@@ -9,7 +9,7 @@ Get your API key
 Start by retrieving your API Key from the "Security" section in new Account admin panel to be able to make authenticated requests to the API.
 https://account.gandi.net/
 '''
-api_secret = 'KWyuy0WIBZ0enWAOjGAM9boP'
+api_secret = 'replace_me'
 
 '''
 Gandiv5 LiveDNS API Location
