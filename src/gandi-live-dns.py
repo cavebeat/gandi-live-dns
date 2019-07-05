@@ -22,8 +22,8 @@ def get_dynip(ifconfig_provider):
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
     r = requests.get(ifconfig_provider)
-    print 'Checking dynamic IP: ' , r._content.strip('\n')
-    return r.content.strip('\n')
+    print ('Checking dynamic IP: ' , r._content.decode('utf8').strip('\n'))
+    return r.content.decode('utf8').strip('\n')
 
 def get_uuid():
     ''' 
@@ -38,8 +38,8 @@ def get_uuid():
     if u.status_code == 200:
         return json_object['zone_uuid']
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID'
-        print  json_object['message']
+        print ('Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID')
+        print  (json_object['message'])
         exit()
 
 def get_dnsip(uuid, subdomain):
@@ -56,11 +56,11 @@ def get_dnsip(uuid, subdomain):
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = json.loads(u._content)
-        print 'Checking IP from DNS Record' , subdomain, ':', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
-        return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+        print ('Checking IP from DNS Record' , subdomain, ':', json_object['rrset_values'][0].encode('ascii','ignore').decode('utf8').strip('\n'))
+        return json_object['rrset_values'][0].encode('ascii','ignore').decode('utf8').strip('\n')
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', subdomain  
-        print  json_object['message']
+        print ('Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', subdomain)
+        print (json_object['message'])
         exit()
 
 def update_records(uuid, dynIP, subdomain):
@@ -80,11 +80,11 @@ def update_records(uuid, dynIP, subdomain):
     json_object = json.loads(u._content)
 
     if u.status_code == 201:
-        print 'Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain
+        print ('Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain)
         return True
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain   
-        print  json_object['message']
+        print ('Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain)
+        print (json_object['message'])
         exit()
 
 
@@ -92,7 +92,7 @@ def update_records(uuid, dynIP, subdomain):
 def main(force_update, verbosity):
 
     if verbosity:
-        print "verbosity turned on - not implemented by now"
+        print ("verbosity turned on - not implemented by now")
 
         
     #get zone ID from Account
@@ -102,7 +102,7 @@ def main(force_update, verbosity):
     dynIP = get_dynip(config.ifconfig)
     
     if force_update:
-        print "Going to update/create the DNS Records for the subdomains"
+        print ("Going to update/create the DNS Records for the subdomains")
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
