@@ -15,6 +15,7 @@ http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 import requests, json
 import config
 import argparse
+import os
 
 
 def get_dynip(ifconfig_provider):
@@ -119,9 +120,22 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', help="increase output verbosity", action="store_true")
     parser.add_argument('-f', '--force', help="force an update/create", action="store_true")
     args = parser.parse_args()
-        
-        
-    main(args.force, args.verbose)
+    
+    api_key = os.environ.get('GANDI_API_KEY')
+    domain = os.environ.get('GANDI_DOMAIN')
+    subdomains = os.environ.get('GANDI_SUBDOMAINS')
+
+    if((api_key is None) or (domain is None) or (subdomains is None)):
+        print ("Please set the following environement variables to configure the program : ")
+        print ("   - GANDI_API_KEY : The API key provided by gandi")
+        print ("   - GANDI_DOMAIN : The domain name that you would like to update. Ex : google.com")
+        print ("   - GANDI_SUBDOMAINS : The list of subdomains that you would like to update. Ex : www www2 home")
+    else:
+        config.api_secret = api_key
+        config.domain = domain
+        config.subdomains = subdomains.split(" ")
+
+        main(args.force, args.verbose)
 
 
 
