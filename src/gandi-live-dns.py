@@ -107,7 +107,7 @@ def main(force_update, verbosity):
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
-        if dynIP == dnsIP:
+        if dynIP.strip() == dnsIP.strip():
             print "IP Address Match - no further action"
         else:
             print "IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP
