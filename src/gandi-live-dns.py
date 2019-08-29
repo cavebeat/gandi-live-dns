@@ -21,6 +21,8 @@ def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
+    if config.verbosity:
+        print('url get: %s' % (ifconfig_provider))
     r = requests.get(ifconfig_provider)
     print('Checking dynamic IP: ' , r._content.decode('utf-8').strip('\n'))
     return r.content.decode('utf-8').strip('\n')
@@ -33,6 +35,8 @@ def get_uuid():
         
     '''
     url = config.api_endpoint + '/domains/' + config.domain
+    if config.verbosity:
+        print('url get: %s' % (url))
     u = requests.get(url, headers={"X-Api-Key":config.api_secret})
     json_object = json.loads(u._content)
     if u.status_code == 200:
@@ -53,6 +57,8 @@ def get_dnsip(uuid):
 
     url = config.api_endpoint+ '/domains/' + config.domain + '/records/' + config.subdomains[0] + '/A'
     headers = {"X-Api-Key":config.api_secret}
+    if config.verbosity:
+        print('url get: %s' % (url))
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = json.loads(u._content)
@@ -73,9 +79,11 @@ def update_records(uuid, dynIP, subdomain):
                          "rrset_values": ["<VALUE>"]}' \
                     https://dns.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
-    url = config.api_endpoint+ '/domains/' + config.domain + '/records/' + subdomain + '/A'
+    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
     headers = {"Content-Type": "application/json", "X-Api-Key":config.api_secret}
+    if config.verbosity:
+        print('url put: %s.  payload: %s' % (url, json.dumps(payload)))
     u = requests.put(url, data=json.dumps(payload), headers=headers)
     json_object = json.loads(u._content)
 
@@ -91,6 +99,7 @@ def update_records(uuid, dynIP, subdomain):
 
 def main(force_update, verbosity):
 
+    config.verbosity = verbosity
     if verbosity:
         print("verbosity turned on - not implemented by now")
 
