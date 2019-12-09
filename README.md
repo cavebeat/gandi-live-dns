@@ -4,7 +4,9 @@ gandi-live-dns
 This is a simple dynamic DNS updater for the
 [Gandi](https://www.gandi.net) registrar. It uses their [LiveDNS REST API](http://doc.livedns.gandi.net/) to update the zone file for a subdomain of a domain to point at the external IPv4 address of the computer it has been run from.
 
-It has been developed on Debian 8 Jessie and tested on Debian 9 Stretch GNU/Linux using Python 2.7.
+~~It has been developed on Debian 8 Jessie and tested on Debian 9 Stretch GNU/Linux using Python 2.7.~~
+
+This has been update to work with Python 3 (Python 3.6 at Ubuntu 18.04). This will not work with Python 2 since it  will be deprecated in 2020-01-01. 
 
 With the new v5 Website, Gandi has also launched a new REST API which makes it easier to communicate via bash/curl or python/requests.  
 
@@ -22,7 +24,10 @@ https://account.gandi.net/en/ and apply for (at least) the production API
 key by following their directions.
 
 #### A DNS Record 
-Create the DNS A Records in the GANDI Webinterface which you want to update if your IP changes. 
+Create the DNS A Records in the GANDI Webinterface which you want to update if your IPv4 changes. 
+
+#### AAAA DNS Record (only needed if ipv6 is in use)
+Create the DNS AAAA Records for ipv6 in the GANDI Webinterface which you want to update if your IPv6 changes. 
 
 #### Git Clone or Download the Script
 Download the Script from here as [zip](https://github.com/cavebeat/gandi-live-dns/archive/master.zip)/[tar.gz](https://github.com/cavebeat/gandi-live-dns/archive/master.tar.gz) and extract it.  
@@ -56,10 +61,16 @@ Your domain for the subdomains to be updated
 ##### subdomains
 All subdomains which should be updated. They get created if they do not yet exist.
 
+* `subdomains` for ipv4
+* `subdomains6` for ipv6
+
 ``` 
 subdomains = ["subdomain1", "subdomain2", "subdomain3"]
+subdomains6 = ["subdomain1v6", "subdomain2v6", "subdomain3v6"]
 ```
-The first subdomain is used to find out the actual IP in the Zone Records. 
+
+The first subdomain is used to find out the actual IP in the Zone Records.
+If the returnded ip from is ipv6, it will use the first from subdomains6.
 
 #### Run the script
 And run the script:
@@ -129,7 +140,7 @@ The XML-RPC API has a limit of 30 requests per 2 seconds, so i guess it's safe t
 
 
 ### Upcoming Features
-* command line Argument for verbose mode
+* ~~command line Argument for verbose mode~~ Aditional verbosity implemented.
 
 ### Inspiration   
 
