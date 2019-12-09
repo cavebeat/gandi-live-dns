@@ -132,7 +132,7 @@ def main(force_update, verbosity):
     else:
         print('Detected ipv4')
         is_ipv6 = False
-        subdomains = config.subdomais
+        subdomains = config.subdomains
 
     dnsIP = get_dnsip(uuid, is_ipv6, verbose)
 
