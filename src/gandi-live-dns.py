@@ -4,10 +4,12 @@
 Gandi v5 LiveDNS - DynDNS Update via REST API and CURL/requests
 
 @author: cave
+@author: dvdme
 License GPLv3
 https://www.gnu.org/licenses/gpl-3.0.html
 
 Created on 13 Aug 2017
+Forked on 08 Dec 2019
 http://doc.livedns.gandi.net/
 http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 '''
@@ -17,6 +19,7 @@ import requests
 import ipaddress
 import config
 import argparse
+import threading as th
 from pprint import pprint
 
 
@@ -111,13 +114,16 @@ def update_records(uuid, dynIP, subdomain, is_ipv6=False, verbose=False):
 
 
 
-def main(force_update, verbosity):
+def main(force_update, verbosity, repeat):
 
     if verbosity:
         print('verbosity turned on')
         verbose = True
     else:
         verbose =False
+
+    if repeat and verbose:
+        print(f'repeat turned on, will repeat every {repeat} seconds')
 
     #get zone ID from Account
     uuid = get_uuid()
@@ -150,10 +156,16 @@ def main(force_update, verbosity):
             print (f'IP Address Mismatch - going to update the DNS Records for the subdomains with new IP {dynIP}')
             for sub in subdomains:
                 update_records(uuid, dynIP, sub, is_ipv6, verbose)
+    if repeat:
+        if verbosity:
+            print(f'Repeating in {repeat} seconds')
+        th.Timer(repeat, main, [force_update, verbosity, repeat]).start()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
     parser.add_argument('-f', '--force', help='force an update/create', action='store_true')
+    parser.add_argument('-r', '--repeat', type=int, help='keep running and repeat every N seconds')
     args = parser.parse_args()
-    main(args.force, args.verbose)
+    main(args.force, args.verbose, args.repeat)

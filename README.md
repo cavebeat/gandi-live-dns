@@ -99,12 +99,14 @@ Status Code: 201 , DNS Record Created , IP updated for subdomain3
 
 ```
 root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py -h
-usage: gandi-live-dns.py [-h] [-f]
+usage: gandi-live-dns.py [-h] [-f] [-v] [-r]
 
 optional arguments:
-  -h, --help     show this help message and exit
-  -f, --force    force an update/create
-
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+  -f, --force           force an update/create
+  -r REPEAT, --repeat REPEAT
+                        keep running and repeat every N seconds
 ```
 
 The force option runs the script, even when no IP change has been detected. 
@@ -135,6 +137,11 @@ Run the script every five minutes.
 ```
 */5 * * * * /root/gandi-live-dns-master/src/gandi-live-dns.py >/dev/null 2>&1 
 ```
+
+### Run with Docker
+
+Use the docker file to build the image. With docker, the script will run every 3600 seconds. (This value can be changed in the Dockerfile.
+
 ### Limitations
 The XML-RPC API has a limit of 30 requests per 2 seconds, so i guess it's safe to update 25 subdomains at once with the REST API. 
 
