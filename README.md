@@ -6,7 +6,7 @@ This is a simple dynamic DNS updater for the
 
 ~~It has been developed on Debian 8 Jessie and tested on Debian 9 Stretch GNU/Linux using Python 2.7.~~
 
-This has been update to work with Python 3 (Python 3.6 at Ubuntu 18.04). This will not work with Python 2 since it  will be deprecated in 2020-01-01. 
+This has been update to work with Python 3 (Python 3.6 at Ubuntu 18.04). This will not work with Python 2 since it ~~will be deprecated in~~ is deprecated since 2020-01-01. 
 
 With the new v5 Website, Gandi has also launched a new REST API which makes it easier to communicate via bash/curl or python/requests.  
 
