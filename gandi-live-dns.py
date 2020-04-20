@@ -10,6 +10,11 @@ https://www.gnu.org/licenses/gpl-3.0.html
 Created on 13 Aug 2017
 http://doc.livedns.gandi.net/ 
 http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
+
+Updated for muliple domains 20 April 2020
+Anthony Townsend
+anthony@starcitygroup.us
+
 '''
 
 import json
@@ -32,7 +37,7 @@ def get_uuid():
     GET /domains/<DOMAIN>:
         
     '''
-    url = config.api_endpoint + '/domains/' + config.domain
+    url = config.api_endpoint + '/domains/' + config.domain # todo where to start lopp over more than one domain?
     u = requests.get(url, headers={"X-Api-Key":config.api_secret})
     json_object = json.loads(u._content)
     if u.status_code == 200:
@@ -104,7 +109,7 @@ def main(force_update, verbosity):
     
     if force_update:
         print("Going to update/create the DNS Records for the subdomains")
-        for sub in config.subdomains:
+        for sub in config.subdomains:# todo loop here ?
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
