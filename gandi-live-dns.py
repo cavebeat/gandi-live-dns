@@ -11,15 +11,11 @@ Created on 13 Aug 2017
 http://doc.livedns.gandi.net/ 
 http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 
-Updated for muliple domains 20 April 2020
-Anthony Townsend
-anthony@starcitygroup.us
-
 '''
 
-import json
-import requests, config
-import argparse
+import json, requests, argparse
+from config import config
+
 
 
 def get_dynip(ifconfig_provider):
@@ -38,7 +34,7 @@ def get_uuid():
         
     '''
     url = config.api_endpoint + '/domains/' + config.domain # todo where to start lopp over more than one domain?
-    u = requests.get(url, headers={"X-Api-Key":config.api_secret})
+    u = requests.get(url, headers={"X-Api-Key": config.api_secret})
     json_object = json.loads(u._content)
     if u.status_code == 200:
         return json_object['zone_uuid']
@@ -56,12 +52,12 @@ def get_dnsip(uuid):
     the actual DNS Record IP
     '''
 
-    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
-    headers = {"X-Api-Key":config.api_secret}
+    url = config.api_endpoint + '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
+    headers = {"X-Api-Key": config.api_secret}
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = json.loads(u._content)
-        print('Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0])
+        print('Checking IP from DNS Record', config.subdomains[0], ':', json_object['rrset_values'][0])
         return json_object['rrset_values'][0]
     else:
         print('Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0])   
@@ -78,9 +74,9 @@ def update_records(uuid, dynIP, subdomain):
                          "rrset_values": ["<VALUE>"]}' \
                     https://dns.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
-    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
+    url = config.api_endpoint + '/zones/' + uuid + '/records/' + subdomain + '/A'
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
-    headers = {"Content-Type": "application/json", "X-Api-Key":config.api_secret}
+    headers = {"Content-Type": "application/json", "X-Api-Key": config.api_secret}
     u = requests.put(url, data=json.dumps(payload), headers=headers)
     json_object = json.loads(u._content)
 
@@ -112,6 +108,7 @@ def main(force_update, verbosity):
         for sub in config.subdomains:# todo loop here ?
             update_records(uuid, dynIP, sub)
     else:
+        # bug script exits if first subdomain doesnt require an update—e.g. if we added to the config file and the IP didn't change (add new subdomains at the start of the list?)
         if dynIP == dnsIP:
             print("IP Address Match - no further action")
         else:
