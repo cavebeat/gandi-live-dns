@@ -9,12 +9,24 @@ https://www.gnu.org/licenses/gpl-3.0.html
 
 Created on 13 Aug 2017
 http://doc.livedns.gandi.net/ 
-http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
+http://doc.livedns.gandi.net/#api-endpoint -> https://dns.beta.gandi.net/api/v5/
 '''
 
 import requests, json
 import config
 import argparse
+import socket
+from pyroute2 import IPRoute
+
+def set_route(dest, gw):
+    resolver = socket.gethostbyname(dest)
+    ip = IPRoute()
+    get_to = ip.get_routes(dst=resolver)
+    for f in get_to[0]['attrs']:
+        if f[0] == 'RTA_GATEWAY':
+            gw_curr = f[1]
+            if gw_curr != gw:
+                ip.route('add', dst=resolver, gateway=gw, mask=32)
 
 
 def get_dynip(ifconfig_provider):
@@ -22,8 +34,8 @@ def get_dynip(ifconfig_provider):
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
     r = requests.get(ifconfig_provider)
-    print 'Checking dynamic IP: ' , r._content.strip('\n')
-    return r.content.strip('\n')
+    print('Checking dynamic IP: ' , r._content.decode('utf-8').strip('\n'))
+    return r.content.decode('utf-8').strip('\n')
 
 def get_uuid():
     ''' 
@@ -38,8 +50,8 @@ def get_uuid():
     if u.status_code == 200:
         return json_object['zone_uuid']
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID'
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID')
+        print( json_object['message'])
         exit()
 
 def get_dnsip(uuid):
@@ -51,16 +63,16 @@ def get_dnsip(uuid):
     the actual DNS Record IP
     '''
 
-    url = config.api_endpoint+ '/zones/' + uuid + '/records/' + config.subdomains[0] + '/A'
+    url = "{0}/zones/{1}/records/{2}/A".format(config.api_endpoint, uuid, config.subdomains[0])
     headers = {"X-Api-Key":config.api_secret}
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = json.loads(u._content)
-        print 'Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
-        return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+        print('Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].encode('ascii','ignore'))
+        return json_object['rrset_values'][0].encode('ascii','ignore')
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0]   
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0])
+        print( json_object['message'])
         exit()
 
 def update_records(uuid, dynIP, subdomain):
@@ -71,7 +83,7 @@ def update_records(uuid, dynIP, subdomain):
                     -H 'X-Api-Key: XXX' \
                     -d '{"rrset_ttl": 10800,
                          "rrset_values": ["<VALUE>"]}' \
-                    https://dns.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
+                    https://dns.beta.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
     url = config.api_endpoint+ '/zones/' + uuid + '/records/' + subdomain + '/A'
     payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
@@ -80,11 +92,11 @@ def update_records(uuid, dynIP, subdomain):
     json_object = json.loads(u._content)
 
     if u.status_code == 201:
-        print 'Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain
+        print('Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain)
         return True
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain   
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain)
+        print( json_object['message'])
         exit()
 
 
@@ -92,25 +104,26 @@ def update_records(uuid, dynIP, subdomain):
 def main(force_update, verbosity):
 
     if verbosity:
-        print "verbosity turned on - not implemented by now"
+        print("verbosity turned on - not implemented by now")
 
         
     #get zone ID from Account
     uuid = get_uuid()
    
     #compare dynIP and DNS IP 
+    set_route(config.ifconfig_name, config.gateway)
     dynIP = get_dynip(config.ifconfig)
     dnsIP = get_dnsip(uuid)
     
     if force_update:
-        print "Going to update/create the DNS Records for the subdomains"
+        print("Going to update/create the DNS Records for the subdomains")
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
-            print "IP Address Match - no further action"
+            print("IP Address Match - no further action")
         else:
-            print "IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP
+            print("IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP)
             for sub in config.subdomains:
                 update_records(uuid, dynIP, sub)
 
