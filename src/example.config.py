@@ -36,10 +36,12 @@ run your own external IP provider:
 + <?php $ip = $_SERVER['REMOTE_ADDR']; ?>
   <?php print $ip; ?>
 e.g. 
-+ https://ifconfig.co/ip
++ https://ifconfig.co
 + http://ifconfig.me/ip
 + http://whatismyip.akamai.com/
 + http://ipinfo.io/ip
 + many more ...
 '''
-ifconfig = 'choose_from_above_or_run_your_own'
+ifconfig = 'http://ipinfo.io/ip'
+ifconfig_name = 'ipinfo.io'
+gateway = '---Your GATEWAY IP----'
