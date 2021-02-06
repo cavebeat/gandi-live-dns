@@ -41,14 +41,6 @@ Edit the config file to fit your needs.
 Start by retrieving your API Key from the "Security" section in new [Gandi Account admin panel](https://account.gandi.net/) to be able to make authenticated requests to the API.
 api_secret = '---my_secret_API_KEY----'
 
-##### api_endpoint
-Gandiv5 LiveDNS API Location
-http://doc.livedns.gandi.net/#api-endpoint
-
-```
-api_endpoint = 'https://dns.api.gandi.net/api/v5'
-```
-
 ##### domain
 Your domain for the subdomains to be updated 
 
@@ -66,9 +58,8 @@ And run the script:
 
 ```
 root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py   
-Checking dynamic IP:  127.0.0.1
-Checking IP from DNS Record subdomain1:  127.0.0.1
-IP Address Match - no further action
+Checking dynamic IP: 127.0.0.1
+[subdomain1] IP Address Match - no further action
 ```
 
 If your IP has changed, it will be detected and the update will be triggered. 
@@ -76,12 +67,9 @@ If your IP has changed, it will be detected and the update will be triggered.
 
 ```
 root@dyndns:~/gandi-live-dns-master/src# ./gandi-live-dns.py
-Checking dynamic IP:  127.0.0.2
-Checking IP from DNS Record subdomain1:  127.0.0.1
-IP Address Mismatch - going to update the DNS Records for the subdomains with new IP 127.0.0.2
-Status Code: 201 , DNS Record Created , IP updated for subdomain1
-Status Code: 201 , DNS Record Created , IP updated for subdomain2
-Status Code: 201 , DNS Record Created , IP updated for subdomain3
+Checking dynamic IP: 127.0.0.2
+[subdomain1] IP Address Mismatch - updating 127.0.0.1 to 127.0.0.2
+[subdomain1] IP updated, status code: 201: DNS Record Created
 ```
 
 #### Command Line Arguments
