@@ -24,7 +24,11 @@ Add dynamic dns container to any stack.
     services:
       gandi_dns:
         image: anthonymobile/gandi-live-dns
-        restart: always   
+        restart: always
+        environment
+          - GANDI_API_KEY=$GANDI_API_KEY
+          - GANDI_DOMAIN=$GANDI_DOMAIN
+          - GANDI_SUBDOMAINS=$GANDI_SUBDOMAINS
     ```
 
 3. Bring up your stack
