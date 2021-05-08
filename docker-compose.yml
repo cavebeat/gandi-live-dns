@@ -1,9 +1,16 @@
 version: '3'
 
+#services:
+#  gandi_dns:
+#    image: anthonymobile/gandi-live-dns
+#    restart: always
+#    environment:
+#      - API_KEY=$API_KEY
+
 services:
   gandi_dns:
-    image: anthonymobile/gandi-live-dns
+    build:
+      context: .
     restart: always
     environment:
-      - API_KEY = $API_KEY
-      - DOMAIN_DICT = $DOMAIN_DICT
+      - API_KEY=$API_KEY

@@ -15,8 +15,10 @@ Add dynamic dns container to any stack.
     
     DOMAIN_DICT = "{'urbantech.live':['test1'],'urbantechhub.io':['test1','test2'],'cornellurban.tech':['test1','test2','test3']}"
     ```
+
+2. define your domains in `domains.json`
     
-2. Add the service to your `docker-compose.yml` stack.
+3. Add the service to your `docker-compose.yml` stack.
 
     ```
     version: '3'
@@ -28,7 +30,7 @@ Add dynamic dns container to any stack.
     
     ```
 
-3. Bring up your stack
+4s. Bring up your stack
 
     ```
     docker-compose up

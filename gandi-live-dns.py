@@ -44,14 +44,13 @@ api_endpoint = 'https://dns.api.gandi.net/api/v5'
 ip_lookup_url = 'http://ipinfo.io/ip'
 
 
-
-
-
-import os
-
 def get_env():
     api_key = os.environ['API_KEY']
-    domain_dict=os.environ['DOMAIN_DICT']
+    dd = os.environ['DOMAIN_DICT']
+
+    with open("domains.json", "rb") as f:
+        domain_dict=json.load(f)
+
     return api_key, domain_dict
 
 def get_myip(ifconfig_provider):
@@ -66,8 +65,8 @@ def get_uuid(domain):
     GET /domains/<DOMAIN>:
         
     '''
-    url = config.api_endpoint + '/domains/' + domain
-    u = requests.get(url, headers={"X-Api-Key": config.api_secret})
+    url = api_endpoint + '/domains/' + domain
+    u = requests.get(url, headers={"X-Api-Key": api_key})
     json_object = json.loads(u._content)
     if u.status_code == 200:
         return json_object['zone_uuid']
