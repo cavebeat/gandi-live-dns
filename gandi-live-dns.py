@@ -46,11 +46,8 @@ ip_lookup_url = 'http://ipinfo.io/ip'
 
 def get_env():
     api_key = os.environ['API_KEY']
-    dd = os.environ['DOMAIN_DICT']
-
     with open("domains.json", "rb") as f:
         domain_dict=json.load(f)
-
     return api_key, domain_dict
 
 def get_myip(ifconfig_provider):
