@@ -8,17 +8,15 @@ Add dynamic dns container to any stack.
 
 ## quickstart
 
-1. create or append the following to your a `.env` file
+1. create or append the following to your `.env` file
 
     ```
-    API_KEY='afahs4535jsafsf7as8fsfasv7cf4'
-    
-    DOMAIN_DICT = "{'urbantech.live':['test1'],'urbantechhub.io':['test1','test2'],'cornellurban.tech':['test1','test2','test3']}"
+    GANDI_API_KEY='afahs4535jsafsf7as8fsfasv7cf4'
+    GANDI_DOMAIN='mydomain.com'
+    GANDI_SUBDOMAINS='king, queen'
     ```
-
-2. define your domains in `domains.json`
-    
-3. Add the service to your `docker-compose.yml` stack.
+ 
+2. Add the service to your `docker-compose.yml` stack.
 
     ```
     version: '3'
@@ -26,12 +24,14 @@ Add dynamic dns container to any stack.
     services:
       gandi_dns:
         image: anthonymobile/gandi-live-dns
-        restart: always
-    
+        restart: always   
     ```
 
-4s. Bring up your stack
+3. Bring up your stack
 
     ```
     docker-compose up
     ```
+## future
+
+The script can handle as many domains and subdomains as you like, but have't figured out a good way to pass them at runtime through `docker-compose`, which won't take an array.
