@@ -17,9 +17,42 @@ Anthony Townsend
 
 '''
 
-import json, requests, argparse
-from config import config
+import json, requests, os
 
+#300 seconds = 5 minutes
+ttl = '300'
+
+# Gandiv5 LiveDNS API Location
+# http://doc.livedns.gandi.net/#api-endpoint
+# https://dns.api.gandi.net/api/v5/
+api_endpoint = 'https://dns.api.gandi.net/api/v5'
+
+
+# IP address lookup service
+# run your own external IP provider:
+# + https://github.com/mpolden/ipd
+# + <?php $ip = $_SERVER['REMOTE_ADDR']; ?>
+#   <?php print $ip; ?>
+# e.g.
+# + https://ifconfig.co/ip
+# + http://ifconfig.me/ip
+# + http://whatismyip.akamai.com/
+# + http://ipinfo.io/ip
+# + many more ...
+
+# ifconfig = 'https://ifconfig.co/ip'
+ip_lookup_url = 'http://ipinfo.io/ip'
+
+
+
+
+
+import os
+
+def get_env():
+    api_key = os.environ['API_KEY']
+    domain_dict=os.environ['DOMAIN_DICT']
+    return api_key, domain_dict
 
 def get_myip(ifconfig_provider):
     r = requests.get(ifconfig_provider)
@@ -52,12 +85,12 @@ def get_dnsip(uuid,subdomain,fully_qualified):
     the actual DNS Record IP
     '''
 
-    url = config.api_endpoint + '/zones/' + uuid + '/records/' + subdomain + '/A'
-    headers = {"X-Api-Key": config.api_secret}
+    url = api_endpoint + '/zones/' + uuid + '/records/' + subdomain + '/A'
+    headers = {"X-Api-Key": api_key}
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = json.loads(u._content)
-        print('\nChecking IP from DNS Record', config.subdomains[0], ':', json_object['rrset_values'][0])
+        print('\nChecking IP from DNS Record', subdomain, ':', json_object['rrset_values'][0])
         return True, json_object['rrset_values'][0]
     else:
         # print('ERROR ({}) Error: HTTP Status Code {} when trying to get IP — subdomain or domain probably doesnt exist.'.format(fully_qualified, u.status_code))
@@ -73,9 +106,9 @@ def update_records(uuid, dynIP, subdomain):
                          "rrset_values": ["<VALUE>"]}' \
                     https://dns.gandi.net/api/v5/zones/<UUID>/records/<NAME>/<TYPE>
     '''
-    url = config.api_endpoint + '/zones/' + uuid + '/records/' + subdomain + '/A'
-    payload = {"rrset_ttl": config.ttl, "rrset_values": [dynIP]}
-    headers = {"Content-Type": "application/json", "X-Api-Key": config.api_secret}
+    url = api_endpoint + '/zones/' + uuid + '/records/' + subdomain + '/A'
+    payload = {"rrset_ttl": ttl, "rrset_values": [dynIP]}
+    headers = {"Content-Type": "application/json", "X-Api-Key": api_key}
     u = requests.put(url, data=json.dumps(payload), headers=headers)
     json_object = json.loads(u._content)
 
@@ -88,24 +121,18 @@ def update_records(uuid, dynIP, subdomain):
         return
 
 
-
-
 if __name__ == "__main__":
+
     print("Gandi DNS Updater v1.1 May 2021, by Anthony Townsend")
 
-    # parser = argparse.ArgumentParser()
-    # # parser.add_argument('-v', '--verbose', help="increase output verbosity", name="verbosity", action="store_true")
-    # parser.add_argument('-f', '--force', help="force an update/create", action="store_true")
-    # args = parser.parse_args()
-        
-    # if verbosity:
-    #     print("Running in verbose mode.")
+    # read the domain_dict and APIkey from .env
+    api_key, domain_dict = get_env()
 
     # get current IP
 
-    myIP = get_myip(config.ifconfig)
+    myIP = get_myip(ip_lookup_url)
 
-    for domain,subdomains in config.domain_dict.items():
+    for domain,subdomains in domain_dict.items():
 
         uuid = get_uuid(domain)
         print ('\n***Using UUID {} for domain {}'.format(uuid,domain))
