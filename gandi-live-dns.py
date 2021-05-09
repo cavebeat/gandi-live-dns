@@ -119,6 +119,9 @@ def update_records(uuid, dynIP, subdomain):
 
 if __name__ == "__main__":
 
+    # future production switch (or a debugging one) limit output to a single print line when a DNS IP is updated
+
+
     print("Gandi DNS Updater v1.1 May 2021, by Anthony Townsend")
 
     # read the domain_dict and APIkey from .env
@@ -135,7 +138,7 @@ if __name__ == "__main__":
 
         for subdomain in subdomains:
 
-            fully_qualified = '.'.join((domain,subdomain))
+            fully_qualified = '.'.join((subdomain,domain,))
             exists, dnsIP=get_dnsip(uuid,subdomain,fully_qualified)
 
             if exists == True:

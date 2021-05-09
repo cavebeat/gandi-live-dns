@@ -1,21 +1,21 @@
 version: '3'
-
-services:
-  gandi_dns:
-    image: anthonymobile/gandi-live-dns
-    restart: always
-    environment:
-      - GANDI_API_KEY=$GANDI_API_KEY
-      - GANDI_DOMAIN=$GANDI_DOMAIN
-      - GANDI_SUBDOMAINS=$GANDI_SUBDOMAINS
-
-## for building and testing this image locally
+#
 #services:
 #  gandi_dns:
-#    build:
-#      context: .
+#    image: anthonymobile/gandi-live-dns
 #    restart: always
 #    environment:
 #      - GANDI_API_KEY=$GANDI_API_KEY
 #      - GANDI_DOMAIN=$GANDI_DOMAIN
 #      - GANDI_SUBDOMAINS=$GANDI_SUBDOMAINS
+
+# for building and testing this image locally
+services:
+  gandi_dns:
+    build:
+      context: .
+    restart: always
+    environment:
+      - GANDI_API_KEY=$GANDI_API_KEY
+      - GANDI_DOMAIN=$GANDI_DOMAIN
+      - GANDI_SUBDOMAINS=$GANDI_SUBDOMAINS

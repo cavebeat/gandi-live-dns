@@ -1,5 +1,3 @@
-#todo make smaller with a multi-stage build — use the builder image as the start and then copying over the compiled binaries for brotlipy into a fresh image
-
 FROM python:3.8-slim as builder
 RUN apt-get update \
 && apt-get install gcc build-essential cron -y \
