@@ -126,9 +126,9 @@ if __name__ == "__main__":
 
     # read the domain_dict and APIkey from .env
     api_key, domain_dict = get_env()
+    print('Using api_key from $GANDI_API_KEY: {}'.format(api_key))
 
     # get current IP
-
     myIP = get_myip(ip_lookup_url)
 
     for domain,subdomains in domain_dict.items():
