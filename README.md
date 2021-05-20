@@ -112,8 +112,8 @@ root@laptop:~# curl https://blog.cavebeat.org/ip/
 ```
 This should fit your personal needs and you still selfhost the whole thing. 
 
-####  IP address lookup service https://ifconfig.co
-https://github.com/mpolden/ipd A simple service for looking up your IP address. This is the code that powers [https://ifconfig.co](https://ifconfig.co)
+####  IP address lookup service https://ip4.me/ip/
+https://github.com/mpolden/ipd A simple service for looking up your IP address. This is the code that powers [https://ip4.me/ip/](https://ip4.me/ip/)
 
 #### use external services
 choose one as described in the config file. 
