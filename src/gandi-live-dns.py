@@ -15,14 +15,21 @@ http://doc.livedns.gandi.net/#api-endpoint -> https://dns.gandi.net/api/v5/
 import requests, json
 import config
 import argparse
+import subprocess
 
+def get_dynip_cmd(ip_command):
+    ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
+    e.g., "curl ifconfig.me/ip", see example.config.py for details to ipcommand providers
+    '''
+    ip = subprocess.Popen(ip_command.split(), stdout=subprocess.PIPE).communicate()[0].decode()
+    return ip.strip('\n')
 
 def get_dynip(ifconfig_provider):
     ''' find out own IPv4 at home <-- this is the dynamic IP which changes more or less frequently
     similar to curl ifconfig.me/ip, see example.config.py for details to ifconfig providers 
     ''' 
     r = requests.get(ifconfig_provider)
-    print 'Checking dynamic IP: ' , r._content.strip('\n')
+    print('Checking dynamic IP: ' , r._content.strip('\n'))
     return r.content.strip('\n')
 
 def get_uuid():
@@ -38,8 +45,8 @@ def get_uuid():
     if u.status_code == 200:
         return json_object['zone_uuid']
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID'
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to get Zone UUID')
+        print(json_object['message'])
         exit()
 
 def get_dnsip(uuid):
@@ -56,11 +63,12 @@ def get_dnsip(uuid):
     u = requests.get(url, headers=headers)
     if u.status_code == 200:
         json_object = json.loads(u._content)
-        print 'Checking IP from DNS Record' , config.subdomains[0], ':', json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
-        return json_object['rrset_values'][0].encode('ascii','ignore').strip('\n')
+        # print(json.dumps(json_object, indent=2))
+        print('Got IP from DNS Record', config.subdomains[0], ':', json_object['rrset_values'][0].strip('\n'))
+        return json_object['rrset_values'][0].strip('\n')
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0]   
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to get IP from subdomain', config.subdomains[0])   
+        print(json_object['message'])
         exit()
 
 def update_records(uuid, dynIP, subdomain):
@@ -80,11 +88,11 @@ def update_records(uuid, dynIP, subdomain):
     json_object = json.loads(u._content)
 
     if u.status_code == 201:
-        print 'Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain
+        print('Status Code:', u.status_code, ',', json_object['message'], ', IP updated for', subdomain)
         return True
     else:
-        print 'Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain   
-        print  json_object['message']
+        print('Error: HTTP Status Code ', u.status_code, 'when trying to update IP from subdomain', subdomain)   
+        print(json_object['message'])
         exit()
 
 
@@ -92,25 +100,25 @@ def update_records(uuid, dynIP, subdomain):
 def main(force_update, verbosity):
 
     if verbosity:
-        print "verbosity turned on - not implemented by now"
+        print("verbosity turned on - not implemented by now")
 
         
     #get zone ID from Account
     uuid = get_uuid()
    
     #compare dynIP and DNS IP 
-    dynIP = get_dynip(config.ifconfig)
+    dynIP = get_dynip_cmd(config.ipcommand) if config.ipcommand else get_dynip(config.ifconfig)
     dnsIP = get_dnsip(uuid)
     
     if force_update:
-        print "Going to update/create the DNS Records for the subdomains"
+        print("Going to update/create the DNS Records for the subdomains")
         for sub in config.subdomains:
             update_records(uuid, dynIP, sub)
     else:
         if dynIP == dnsIP:
-            print "IP Address Match - no further action"
+            print("IP Address Match - no further action")
         else:
-            print "IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP
+            print("IP Address Mismatch - going to update the DNS Records for the subdomains with new IP", dynIP)
             for sub in config.subdomains:
                 update_records(uuid, dynIP, sub)
 
